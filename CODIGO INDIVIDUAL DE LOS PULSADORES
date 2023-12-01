@@ -1,0 +1,56 @@
+#include <ESP8266WiFi.h>
+
+const int pinAlternar = 13;  
+int contadorAlternar = 0;
+
+const int pinPresentacion = 12;  
+int contadorPresentacion = 0;
+
+const int pinAudio = 14; 
+int contadorAudio = 0;
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(pinAlternar, INPUT_PULLUP);
+  pinMode(pinPresentacion, INPUT_PULLUP);
+  pinMode(pinAudio, INPUT_PULLUP);  // Configurar el nuevo pin como entrada con resistencia pull-up
+}
+
+void loop() {
+  int estadoAlternar = digitalRead(pinAlternar);  // Leer el estado del pulsador "Alternar"
+  int estadoPresentacion = digitalRead(pinPresentacion);  // Leer el estado del pulsador "Presentación"
+  int estadoAudio = digitalRead(pinAudio);  // Leer el estado del nuevo pulsador "pinAudio"
+
+  if (contadorPresentacion < 5) {
+    estadoPresentacion = 0;
+    contadorPresentacion++;
+  } else if (estadoPresentacion == 1) {
+    estadoPresentacion = 1;
+    contadorPresentacion = 0;
+  }
+
+  if (contadorAlternar < 5) {
+    estadoAlternar = 0;
+    contadorAlternar++;
+  } else if (estadoAlternar == 1) {
+    estadoAlternar = 1;
+    contadorAlternar = 0;
+  }
+
+  if (contadorAudio < 5) {
+    estadoAudio = 0;
+    contadorAudio++;
+  } else if (estadoAudio == 1) {
+    estadoAudio = 1;
+    contadorAudio = 0;
+  }
+
+  Serial.println("Boton Alternar: ");
+  Serial.println(estadoAlternar);
+  Serial.println("Boton Presentacion: ");
+  Serial.println(estadoPresentacion);
+  Serial.println("Boton Audio: ");
+  Serial.println(estadoAudio);
+
+  delay(300);
+}
