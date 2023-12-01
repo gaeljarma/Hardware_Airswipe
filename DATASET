@@ -1,0 +1,77 @@
+#include <ArduinoJson.h>
+#include <Wire.h>
+#include <MPU6050.h>
+
+int TIME = 0;
+int cont = 0;
+int GESTO = 794;
+String TIPO = "U";
+
+float vx, vy;  
+
+MPU6050 mpu;
+
+void setup() {
+  Wire.begin();
+  mpu.initialize();
+  Serial.begin(115200);
+}
+
+void loop() {
+  unsigned long startTime = millis();
+  
+  while (millis() - startTime < 500) {
+   // int16_t accelerometer_x, accelerometer_y, accelerometer_z;
+    float gx, gy, gz;
+
+   // accelerometer_x = mpu.getAccelerationX();
+   // accelerometer_y = mpu.getAccelerationY();
+   // accelerometer_z = mpu.getAccelerationZ();
+
+    gx = mpu.getRotationX();
+    gy = mpu.getRotationY();
+    gz = mpu.getRotationZ();
+
+  vx = -(gy-100)/150;   //Calculando os valores de vx e vy.
+  vy = -(gx+15)/150;
+
+   String data =  String(vx) + "," + String(vy) + "," + String(TIME) + "," + String(GESTO)+ "," + String(TIPO);
+
+  
+                 
+                 
+    Serial.println(data);  // Cambiamos print por println para enviar una línea completa
+    delay(50);
+    TIME = TIME + 50;
+  }
+  TIME = 0;
+  GESTO++;
+  cont++;
+  if (cont <= 10){
+    Serial.println("Ahora hace el gesto de ARRIBA");   
+    TIPO = "U";
+  }
+  if (cont > 10 && cont <= 20){
+    Serial.println("Ahora hace el gesto de DERECHA");   
+    TIPO = "R";
+  }
+  if (cont > 20 && cont <= 30){
+    Serial.println("Ahora hace el gesto de ABAJO");   
+    TIPO = "D";
+  }
+  if (cont > 30 && cont <= 40){
+    Serial.println("Ahora hace el gesto de IZQEUIRDA");   
+    TIPO = "L";
+  }
+  if (cont > 40 && cont <= 50){
+    Serial.println("Ahora hace el gesto de  QUIETO");   
+    TIPO = "F";
+  }
+  if (cont > 50){  
+    cont = 0;
+  }
+  delay(2000); 
+  Serial.println("Ahora:");
+  delay(1000); 
+  Serial.println("Siguiente gesto:");
+}
